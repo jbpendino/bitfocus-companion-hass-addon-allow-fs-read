@@ -7,6 +7,10 @@ RUN apk add --no-cache socat
 # Kopieer de rootfs
 COPY rootfs /
 
+# Maak het run script uitvoerbaar
+RUN chmod a+x /etc/services.d/companion/run
+RUN chmod a+x /etc/services.d/companion/finish
+
 # Labels voor Home Assistant
 LABEL io.hass.name="Bitfocus Companion" \
       io.hass.description="Bitfocus Companion voor het aansturen van een Stream Deck via Companion Satellite" \
