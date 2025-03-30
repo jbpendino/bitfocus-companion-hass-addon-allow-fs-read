@@ -13,9 +13,6 @@ VOLUME /companion
 # Poorten die we willen blootstellen
 EXPOSE 8000 16622 16623 28492
 
-# Zorg ervoor dat het entrypoint script uitgevoerd kan worden
-RUN chmod +x /docker-entrypoint.sh
-
 # Entrypoint en command behouden van originele container
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["./node-runtimes/main/bin/node", "./main.js", "--admin-address", "0.0.0.0", "--admin-port", "8000", "--config-dir", "/companion", "--extra-module-path", "/app/module-local-dev"]
