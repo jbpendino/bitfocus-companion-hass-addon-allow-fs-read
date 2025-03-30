@@ -4,11 +4,10 @@ FROM ${BUILD_FROM}
 # Installeer Docker CLI
 RUN apk add --no-cache docker-cli
 
-# Kopieer run.sh naar de root
+# Kopieer de run.sh naar de root
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
-CMD ["/run.sh"]
 # Labels voor Home Assistant
 LABEL io.hass.name="Bitfocus Companion" \
       io.hass.description="Bitfocus Companion voor het aansturen van een Stream Deck via Companion Satellite" \
