@@ -5,5 +5,5 @@ FROM ${BUILD_FROM}
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-# Zorg dat S6-Overlay weet dat het ons run.sh script moet gebruiken
-ENTRYPOINT ["/init"]
+# Start via run.sh
+ENTRYPOINT ["/run.sh"]
