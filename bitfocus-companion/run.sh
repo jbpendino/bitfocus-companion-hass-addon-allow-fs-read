@@ -1,21 +1,29 @@
-#!/usr/bin/with-contenv bashio
+#!/bin/bash
+set -e
 
-# Maak de data directory
+echo "Bitfocus Companion proxy addon starting..."
+
+# Maak data directory voor persistentie
+echo "Creating persistent storage directory..."
 mkdir -p /data/companion
 chmod 777 /data/companion
 
-# Bepaal de juiste image op basis van de architectuur
+# Bepaal architectuur voor de juiste image
 if [ "$(uname -m)" = "aarch64" ]; then
+  echo "Detected ARM64 architecture"
   IMAGE="ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:ff126d7fa635ae9f64568d522432f7665dc8c846f067302b39ae55eb513472a5"
 else
+  echo "Detected AMD64 architecture"
   IMAGE="ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:813dfd0f40a570f2fd1a4e390edd9e19fa21c790c3b2068af54213f1e2c2f2cf"
 fi
 
-# Toon een bericht dat we de container starten
-bashio::log.info "Starting Bitfocus Companion container..."
+# Stop eventuele bestaande container
+echo "Stopping any existing Companion containers..."
+docker rm -f companion 2>/dev/null || true
 
-# Start de container via Docker
-docker run --name bitfocus-companion \
+# Start de container
+echo "Starting Bitfocus Companion container..."
+docker run -d --name companion \
   --restart=unless-stopped \
   -v /data/companion:/companion \
   -p 8000:8000 \
@@ -26,13 +34,16 @@ docker run --name bitfocus-companion \
   -e COMPANION_CONFIG_BASEDIR=/companion \
   ${IMAGE}
 
-# Blijf draaien om de addon niet te laten stoppen
+echo "Bitfocus Companion container started successfully!"
+
+# Blijf draaien om addon actief te houden en container te monitoren
+echo "Starting monitoring loop..."
 while true; do
   sleep 30
-  # Controleer of de container nog draait
-  if ! docker ps --filter "name=bitfocus-companion" --format "{{.Names}}" | grep -q "bitfocus-companion"; then
-    bashio::log.warning "Bitfocus Companion container is gestopt, herstart..."
-    docker start bitfocus-companion || docker run --name bitfocus-companion \
+  # Controleer of container nog draait
+  if ! docker ps --filter "name=companion" | grep -q companion; then
+    echo "Container is stopped, restarting..."
+    docker start companion || docker run -d --name companion \
       --restart=unless-stopped \
       -v /data/companion:/companion \
       -p 8000:8000 \
