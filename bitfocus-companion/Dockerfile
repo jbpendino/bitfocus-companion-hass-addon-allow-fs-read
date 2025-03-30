@@ -1,9 +1,21 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:13.2.2
-FROM ${BUILD_FROM}
+# Gebruik rechtstreeks de officiële Bitfocus Companion image
+# voor amd64 architectuur
+FROM ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:813dfd0f40a570f2fd1a4e390edd9e19fa21c790c3b2068af54213f1e2c2f2cf
 
-# Kopieer run.sh script
-COPY run.sh /
-RUN chmod a+x /run.sh
+# Definieer een specifieke config directory
+ENV COMPANION_CONFIG_BASEDIR=/companion
 
-# Definieer entrypoint
-CMD [ "/run.sh" ]
+# Volume voor configuratie persistentie
+VOLUME /companion
+
+# Blootstellen van poorten
+EXPOSE 8000 16622 16623 28492
+
+# Eenvoudig health check script
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD [ "curl", "-fSsq", "http://localhost:8000/" ]
+
+# Behoud het originele entrypoint
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+# Originele command
+CMD ["./node-runtimes/main/bin/node", "./main.js", "--admin-address", "0.0.0.0", "--admin-port", "8000", "--config-dir", "/companion", "--extra-module-path", "/app/module-local-dev"]
