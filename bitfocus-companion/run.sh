@@ -19,9 +19,9 @@ fi
 
 # Stop eventuele bestaande container
 echo "Stopping any existing Companion containers..."
-docker rm -f companion 2>/dev/null || true
+docker ps -a | grep companion && docker rm -f companion 2>/dev/null || true
 
-# Start de container
+# Start de container met expliciete socket
 echo "Starting Bitfocus Companion container..."
 docker run -d --name companion \
   --restart=unless-stopped \
@@ -34,14 +34,19 @@ docker run -d --name companion \
   -e COMPANION_CONFIG_BASEDIR=/companion \
   ${IMAGE}
 
-echo "Bitfocus Companion container started successfully!"
+if [ $? -eq 0 ]; then
+  echo "Bitfocus Companion container started successfully!"
+else
+  echo "Failed to start Bitfocus Companion container"
+  exit 1
+fi
 
 # Blijf draaien om addon actief te houden en container te monitoren
 echo "Starting monitoring loop..."
 while true; do
   sleep 30
   # Controleer of container nog draait
-  if ! docker ps --filter "name=companion" | grep -q companion; then
+  if ! docker ps | grep companion > /dev/null; then
     echo "Container is stopped, restarting..."
     docker start companion || docker run -d --name companion \
       --restart=unless-stopped \
