@@ -1,21 +1,24 @@
 ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
-# Definieer een specifieke config directory
-ENV COMPANION_CONFIG_BASEDIR=/companion
+# Label voor Home Assistant
+LABEL io.hass.version="1.0.0" io.hass.type="addon" io.hass.arch="aarch64|amd64"
 
-# Kopieer ons eigen entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Definieer de config directory
+ENV COMPANION_CONFIG_BASEDIR=/companion
 
 # Volume voor configuratie persistentie
 VOLUME /companion
 
-# Blootstellen van poorten
+# Poorten die we willen blootstellen
 EXPOSE 8000 16622 16623 28492
 
-# Eenvoudig health check script
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD [ "curl", "-fSsq", "http://localhost:8000/" ]
+# Zorg ervoor dat het entrypoint script uitgevoerd kan worden
+RUN chmod +x /docker-entrypoint.sh
 
-# Gebruik ons eigen entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
+# Entrypoint en command behouden van originele container
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["./node-runtimes/main/bin/node", "./main.js", "--admin-address", "0.0.0.0", "--admin-port", "8000", "--config-dir", "/companion", "--extra-module-path", "/app/module-local-dev"]
+
+# Werkdirectory instellen op /app waar de applicatie zich bevindt
+WORKDIR /app
