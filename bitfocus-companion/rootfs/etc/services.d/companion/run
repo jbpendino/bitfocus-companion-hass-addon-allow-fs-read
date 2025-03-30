@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/with-contenv bash
 set -e
 
 echo "Bitfocus Companion proxy addon starting..."
@@ -8,44 +8,50 @@ echo "Creating persistent storage directory..."
 mkdir -p /data/companion
 chmod 777 /data/companion
 
-# Bepaal architectuur
-ARCH=$(uname -m)
-echo "Detected architecture: ${ARCH}"
-
-# Start socat proxies voor de poorten
-echo "Starting port forwarding..."
-socat TCP-LISTEN:8000,fork TCP:127.0.0.1:8000 &
-socat TCP-LISTEN:16622,fork TCP:127.0.0.1:16622 &
-socat TCP-LISTEN:16623,fork TCP:127.0.0.1:16623 &
-socat TCP-LISTEN:28492,fork TCP:127.0.0.1:28492 &
-
-# Download en installeer Companion direct
-echo "Downloading and installing Companion..."
-cd /tmp
-if [ "${ARCH}" = "aarch64" ]; then
-  COMPANION_ARCH="arm64"
+# Bepaal architectuur voor de juiste image
+if [ "$(uname -m)" = "aarch64" ]; then
+  echo "Detected ARM64 architecture"
+  IMAGE="ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:ff126d7fa635ae9f64568d522432f7665dc8c846f067302b39ae55eb513472a5"
 else
-  COMPANION_ARCH="x64"
+  echo "Detected AMD64 architecture"
+  IMAGE="ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:813dfd0f40a570f2fd1a4e390edd9e19fa21c790c3b2068af54213f1e2c2f2cf"
 fi
 
-echo "Using Companion architecture: ${COMPANION_ARCH}"
-curl -L -o companion.tar.gz https://bitfocus.io/companion/download/linux-${COMPANION_ARCH}
-mkdir -p /opt/companion
-tar -xzf companion.tar.gz -C /opt/companion --strip-components=1
-cd /opt/companion
+# Stop eventuele bestaande container
+echo "Stopping any existing Companion containers..."
+docker rm -f companion 2>/dev/null || true
 
-# Start Companion
-echo "Starting Companion..."
-node main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir /data/companion &
+# Start de container
+echo "Starting Bitfocus Companion container..."
+docker run -d --name companion \
+  --restart=unless-stopped \
+  -v /data/companion:/companion \
+  -p 8000:8000 \
+  -p 16622:16622 \
+  -p 16623:16623 \
+  -p 28492:28492 \
+  --device=/dev/bus/usb:/dev/bus/usb \
+  -e COMPANION_CONFIG_BASEDIR=/companion \
+  ${IMAGE}
 
-# Houd de addon actief
-echo "Addon running, monitoring Companion process..."
+echo "Bitfocus Companion container started successfully!"
+
+# Blijf draaien om addon actief te houden en container te monitoren
+echo "Starting monitoring loop..."
 while true; do
   sleep 30
-  # Controleer of het node proces nog draait
-  if ! pgrep -f "node main.js" > /dev/null; then
-    echo "Companion process stopped, restarting..."
-    cd /opt/companion
-    node main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir /data/companion &
+  # Controleer of container nog draait
+  if ! docker ps --filter "name=companion" | grep -q companion; then
+    echo "Container is stopped, restarting..."
+    docker start companion || docker run -d --name companion \
+      --restart=unless-stopped \
+      -v /data/companion:/companion \
+      -p 8000:8000 \
+      -p 16622:16622 \
+      -p 16623:16623 \
+      -p 28492:28492 \
+      --device=/dev/bus/usb:/dev/bus/usb \
+      -e COMPANION_CONFIG_BASEDIR=/companion \
+      ${IMAGE}
   fi
 done
