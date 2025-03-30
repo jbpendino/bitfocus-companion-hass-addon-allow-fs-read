@@ -17,7 +17,8 @@ ports_description:
   16622/tcp: "Satellite API"
   16623/tcp: "WebSocket (Elgato Plugin)"
   28492/tcp: "Additional port"
-image: "ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b"
+# Verwijder deze regel als je een eigen Dockerfile gebruikt:
+# image: "ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b"
 host_network: false
 usb: true
 devices:
