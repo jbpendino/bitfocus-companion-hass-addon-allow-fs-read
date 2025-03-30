@@ -1,40 +1,30 @@
 #!/bin/bash
 set -e
 
-echo "Bitfocus Companion proxy addon starting..."
+echo "Bitfocus Companion addon starting..."
 
 # Maak data directory voor persistentie
 echo "Creating persistent storage directory..."
 mkdir -p /data/companion
 chmod 777 /data/companion
 
-# Direct naar Companion binary
-COMPANION_DIR="/opt/companion"
-mkdir -p ${COMPANION_DIR}
-
-# Bepaal architectuur
-ARCH=$(uname -m)
-echo "Detected architecture: ${ARCH}"
-
-# Download de juiste versie
-if [ "${ARCH}" = "aarch64" ]; then
-  BINARY_URL="https://github.com/bitfocus/companion/releases/download/v3.5.3/companion-v3.5.3-linux-arm64.tar.gz"
-  COMPANION_ARCH="arm64"
+# Bepaal architectuur voor de juiste image
+if [ "$(uname -m)" = "aarch64" ]; then
+  echo "Detected ARM64 architecture"
+  IMAGE="ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:ff126d7fa635ae9f64568d522432f7665dc8c846f067302b39ae55eb513472a5"
 else
-  BINARY_URL="https://github.com/bitfocus/companion/releases/download/v3.5.3/companion-v3.5.3-linux-x64.tar.gz"
-  COMPANION_ARCH="x64"
+  echo "Detected AMD64 architecture"
+  IMAGE="ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:813dfd0f40a570f2fd1a4e390edd9e19fa21c790c3b2068af54213f1e2c2f2cf"
 fi
 
-echo "Downloading and installing Companion..."
-echo "Using Companion architecture: ${COMPANION_ARCH}"
+# Gebruik directe socat om poorten door te sturen
+echo "Starting port forwarding..."
+# Start socat processen op de achtergrond om poorten door te sturen
+socat TCP-LISTEN:8000,fork,reuseaddr TCP:127.0.0.1:18000 &
+socat TCP-LISTEN:16622,fork,reuseaddr TCP:127.0.0.1:16622 &
+socat TCP-LISTEN:16623,fork,reuseaddr TCP:127.0.0.1:16623 &
+socat TCP-LISTEN:28492,fork,reuseaddr TCP:127.0.0.1:28492 &
 
-# Download en extract
-cd ${COMPANION_DIR}
-curl -L -o companion.tar.gz ${BINARY_URL}
-tar xzf companion.tar.gz
-rm companion.tar.gz
-
-# Start companion met de juiste parameters
-echo "Starting Companion..."
-cd ${COMPANION_DIR}
-exec ./companion --admin-address 0.0.0.0 --admin-port 8000 --config-dir /data/companion
+# Houd het script actief
+echo "Addon is now running, keeping process alive..."
+tail -f /dev/null
