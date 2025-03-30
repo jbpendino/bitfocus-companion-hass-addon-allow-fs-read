@@ -1,12 +1,12 @@
 name: "Bitfocus Companion"
 description: "Bitfocus Companion voor het aansturen van een Stream Deck via Companion Satellite"
-version: "0.0.9"
+version: "1.0.0"
 slug: "bitfocus_companion"
 init: false
 arch:
   - aarch64
   - amd64
-startup: system
+startup: application
 boot: auto
 webui: "http://[HOST]:[PORT:8000]/"
 panel_icon: "mdi:remote"
@@ -25,4 +25,5 @@ devices:
 privileged:
   - NET_ADMIN
   - SYS_ADMIN
-docker_api: true
+hassio_api: true
+docker_api: true  # Belangrijk voor toegang tot Docker daemon
