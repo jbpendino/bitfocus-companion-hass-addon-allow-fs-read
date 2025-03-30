@@ -1,57 +1,40 @@
-#!/usr/bin/with-contenv bash
+#!/bin/bash
 set -e
 
-echo "Bitfocus Companion proxy addon starting..."
+echo "Bitfocus Companion addon starting..."
 
 # Maak data directory voor persistentie
 echo "Creating persistent storage directory..."
 mkdir -p /data/companion
 chmod 777 /data/companion
 
-# Bepaal architectuur voor de juiste image
-if [ "$(uname -m)" = "aarch64" ]; then
-  echo "Detected ARM64 architecture"
-  IMAGE="ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:ff126d7fa635ae9f64568d522432f7665dc8c846f067302b39ae55eb513472a5"
-else
-  echo "Detected AMD64 architecture"
-  IMAGE="ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:813dfd0f40a570f2fd1a4e390edd9e19fa21c790c3b2068af54213f1e2c2f2cf"
-fi
+echo "Setting up port forwarding..."
 
-# Stop eventuele bestaande container
-echo "Stopping any existing Companion containers..."
-docker rm -f companion 2>/dev/null || true
+# Start socat processen op de achtergrond om poorten door te sturen
+socat TCP-LISTEN:8000,fork,reuseaddr TCP:127.0.0.1:18000 &
+SOCAT_PID_1=$!
+echo "Started socat for port 8000 -> 18000 (PID: $SOCAT_PID_1)"
 
-# Start de container
-echo "Starting Bitfocus Companion container..."
-docker run -d --name companion \
-  --restart=unless-stopped \
-  -v /data/companion:/companion \
-  -p 8000:8000 \
-  -p 16622:16622 \
-  -p 16623:16623 \
-  -p 28492:28492 \
-  --device=/dev/bus/usb:/dev/bus/usb \
-  -e COMPANION_CONFIG_BASEDIR=/companion \
-  ${IMAGE}
+socat TCP-LISTEN:16622,fork,reuseaddr TCP:127.0.0.1:16622 &
+SOCAT_PID_2=$!
+echo "Started socat for port 16622 (PID: $SOCAT_PID_2)"
 
-echo "Bitfocus Companion container started successfully!"
+socat TCP-LISTEN:16623,fork,reuseaddr TCP:127.0.0.1:16623 &
+SOCAT_PID_3=$!
+echo "Started socat for port 16623 (PID: $SOCAT_PID_3)"
 
-# Blijf draaien om addon actief te houden en container te monitoren
-echo "Starting monitoring loop..."
+socat TCP-LISTEN:28492,fork,reuseaddr TCP:127.0.0.1:28492 &
+SOCAT_PID_4=$!
+echo "Started socat for port 28492 (PID: $SOCAT_PID_4)"
+
+echo "Port forwarding is set up and running"
+echo "Please ensure the Companion container is running outside this addon"
+echo "See documentation for instructions on how to start the container"
+
+# Houd het script actief
+echo "Addon is now running, keeping process alive..."
+# Monitor and display status every minute
 while true; do
-  sleep 30
-  # Controleer of container nog draait
-  if ! docker ps --filter "name=companion" | grep -q companion; then
-    echo "Container is stopped, restarting..."
-    docker start companion || docker run -d --name companion \
-      --restart=unless-stopped \
-      -v /data/companion:/companion \
-      -p 8000:8000 \
-      -p 16622:16622 \
-      -p 16623:16623 \
-      -p 28492:28492 \
-      --device=/dev/bus/usb:/dev/bus/usb \
-      -e COMPANION_CONFIG_BASEDIR=/companion \
-      ${IMAGE}
-  fi
+  sleep 60
+  echo "Addon is still running, forwarding ports ($(date))"
 done
