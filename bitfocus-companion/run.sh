@@ -17,11 +17,18 @@ else
   IMAGE="ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:813dfd0f40a570f2fd1a4e390edd9e19fa21c790c3b2068af54213f1e2c2f2cf"
 fi
 
-# Stop eventuele bestaande container
+# Stop any existing container (with error suppression)
 echo "Stopping any existing Companion containers..."
-docker ps -a | grep companion && docker rm -f companion 2>/dev/null || true
+docker ps -aq --filter "name=companion" | xargs -r docker rm -f || true
 
-# Start de container met expliciete socket
+# Set explicit Docker host (for Home Assistant)
+export DOCKER_HOST="unix:///var/run/docker.sock"
+
+# Try to check Docker status
+echo "Checking Docker status..."
+docker info || echo "Warning: Docker info command failed, but continuing..."
+
+# Start container with all needed options
 echo "Starting Bitfocus Companion container..."
 docker run -d --name companion \
   --restart=unless-stopped \
@@ -32,31 +39,33 @@ docker run -d --name companion \
   -p 28492:28492 \
   --device=/dev/bus/usb:/dev/bus/usb \
   -e COMPANION_CONFIG_BASEDIR=/companion \
-  ${IMAGE}
+  ${IMAGE} || echo "Failed to start container, but keeping addon running"
 
-if [ $? -eq 0 ]; then
-  echo "Bitfocus Companion container started successfully!"
-else
-  echo "Failed to start Bitfocus Companion container"
-  exit 1
-fi
-
-# Blijf draaien om addon actief te houden en container te monitoren
-echo "Starting monitoring loop..."
+# Keep the addon running in any case
+echo "Entering monitoring loop..."
 while true; do
   sleep 30
-  # Controleer of container nog draait
-  if ! docker ps | grep companion > /dev/null; then
-    echo "Container is stopped, restarting..."
-    docker start companion || docker run -d --name companion \
-      --restart=unless-stopped \
-      -v /data/companion:/companion \
-      -p 8000:8000 \
-      -p 16622:16622 \
-      -p 16623:16623 \
-      -p 28492:28492 \
-      --device=/dev/bus/usb:/dev/bus/usb \
-      -e COMPANION_CONFIG_BASEDIR=/companion \
-      ${IMAGE}
+  
+  # Check if container exists and is running
+  if docker ps -q --filter "name=companion" | grep -q .; then
+    echo "Container is running ($(date))"
+  else
+    # Try to restart if container exists but not running
+    if docker ps -aq --filter "name=companion" | grep -q .; then
+      echo "Container exists but stopped, trying to restart..."
+      docker start companion || echo "Failed to restart container"
+    else
+      echo "Container doesn't exist, trying to create..."
+      docker run -d --name companion \
+        --restart=unless-stopped \
+        -v /data/companion:/companion \
+        -p 8000:8000 \
+        -p 16622:16622 \
+        -p 16623:16623 \
+        -p 28492:28492 \
+        --device=/dev/bus/usb:/dev/bus/usb \
+        -e COMPANION_CONFIG_BASEDIR=/companion \
+        ${IMAGE} || echo "Failed to start container"
+    fi
   fi
 done
