@@ -1,6 +1,6 @@
 # Gebruik rechtstreeks de officiële Bitfocus Companion image
-# voor amd64 architectuur
-FROM ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:813dfd0f40a570f2fd1a4e390edd9e19fa21c790c3b2068af54213f1e2c2f2cf
+# voor arm64 architectuur
+FROM ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:ff126d7fa635ae9f64568d522432f7665dc8c846f067302b39ae55eb513472a5
 
 # Definieer een specifieke config directory
 ENV COMPANION_CONFIG_BASEDIR=/companion
