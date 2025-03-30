@@ -1,5 +1,5 @@
 name: "Bitfocus Companion"
-description: "Bitfocus Companion voor het aansturen van een Stream Deck vanuit Home Assistant"
+description: "Bitfocus Companion voor het aansturen van een Stream Deck via Companion Satellite"
 version: "1.0.0"
 slug: "bitfocus_companion"
 init: true
@@ -18,9 +18,13 @@ ports_description:
   16623/tcp: "WebSocket (Elgato Plugin)"
   28492/tcp: "Additional port"
 host_network: false
-usb: false
+usb: true
 devices:
   - /dev/bus/usb
+webui: "http://[HOST]:[PORT:8000]/"
+ingress: false  # Ingress optie staat op false omdat standalone webui beter werkt voor deze toepassing
+ingress_port: 8000
+panel_icon: mdi:remote
 options:
   config_dir: "/companion"
 schema:
