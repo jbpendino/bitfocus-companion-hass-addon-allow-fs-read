@@ -1,11 +1,12 @@
-#!/bin/bash
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Start the Bitfocus Companion container using docker-compose
+# ==============================================================================
 
-# Definieer een vaste config directory
-CONFIG_DIR="/companion"
+# Maak de persistente datamap aan
+mkdir -p /data/companion
+chmod 777 /data/companion
 
-# Zorg ervoor dat de config directory bestaat
-mkdir -p ${CONFIG_DIR}
-chown companion:companion ${CONFIG_DIR}
-
-# Start Companion met de nodige parameters
-exec /docker-entrypoint.sh ./node-runtimes/main/bin/node ./main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir ${CONFIG_DIR} --extra-module-path /app/module-local-dev
+# Start de container via docker-compose
+cd /etc/docker-compose
+docker-compose up
