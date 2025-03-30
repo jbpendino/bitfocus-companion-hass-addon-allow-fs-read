@@ -1,7 +1,7 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:13.2.2
 FROM ${BUILD_FROM}
 
-# Installeer benodigde tools
+# Installeer socat voor port forwarding
 RUN apk add --no-cache socat
 
 # Kopieer de rootfs
