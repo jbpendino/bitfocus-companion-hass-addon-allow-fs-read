@@ -26,4 +26,7 @@ privileged:
   - NET_ADMIN
   - SYS_ADMIN
 hassio_api: true
-docker_api: true  # Belangrijk voor toegang tot Docker daemon
+docker_api: true  # Belangrijk voor Docker toegang!
+auth_api: true
+host_network: true  # Dit kan helpen met netwerk gerelateerde problemen
+full_access: true   # Geef volledige toegang tot het systeem
