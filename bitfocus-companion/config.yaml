@@ -26,6 +26,7 @@ privileged:
   - NET_ADMIN
   - DAC_READ_SEARCH
   - SYS_ADMIN
+  - ALL
 hassio_api: true
 hassio_role: default
 docker_api: true
