@@ -1,6 +1,6 @@
 name: "Bitfocus Companion"
 description: "Bitfocus Companion voor het aansturen van een Stream Deck via Companion Satellite"
-version: "0.1.3"
+version: "1.0.0"
 slug: "bitfocus_companion"
 init: false
 arch:
@@ -22,11 +22,3 @@ ports_description:
   28492/tcp: "Additional port"
 devices:
   - /dev/bus/usb
-privileged:
-  - NET_ADMIN
-  - SYS_ADMIN
-hassio_api: true
-docker_api: true  # Belangrijk voor Docker toegang!
-auth_api: true
-host_network: true  # Dit kan helpen met netwerk gerelateerde problemen
-full_access: true   # Geef volledige toegang tot het systeem
