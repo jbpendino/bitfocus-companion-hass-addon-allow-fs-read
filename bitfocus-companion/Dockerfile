@@ -1,24 +1,15 @@
-ARG BUILD_FROM
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:13.2.2
 FROM ${BUILD_FROM}
+
+# Installeer Docker CLI
+RUN apk add --no-cache docker-cli
+
+# Kopieer het run script
+COPY run.sh /
+RUN chmod +x /run.sh
 
 # Label voor Home Assistant
 LABEL io.hass.version="1.0.0" io.hass.type="addon" io.hass.arch="aarch64|amd64"
 
-# Kopieer ons eigen entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# Definieer de config directory
-ENV COMPANION_CONFIG_BASEDIR=/companion
-
-# Volume voor configuratie persistentie
-VOLUME /companion
-
-# Poorten die we willen blootstellen
-EXPOSE 8000 16622 16623 28492
-
-# Gebruik ons eigen entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
-
-# Werkdirectory instellen op /app waar de applicatie zich bevindt
-WORKDIR /app
+# Start script
+CMD ["/run.sh"]
