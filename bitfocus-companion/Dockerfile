@@ -2,11 +2,10 @@ ARG BUILD_FROM=ghcr.io/hassio-addons/base:13.2.2
 FROM ${BUILD_FROM}
 
 # Installeer Docker CLI
-RUN apk add --no-cache docker-cli
+RUN apk add --no-cache docker-cli bash
 
-# Kopieer de run.sh naar de root
-COPY run.sh /run.sh
-RUN chmod +x /run.sh
+# Kopieer de rootfs
+COPY rootfs /
 
-CMD ["/run.sh"]
-
+# Labels voor HA
+LABEL io.hass.version="1.0.0" io.hass.type="addon" io.hass.arch="aarch64|amd64"
