@@ -11,12 +11,9 @@ boot: auto
 webui: "http://[HOST]:[PORT:8000]/"
 panel_icon: "mdi:remote"
 
-# Persistente mappen toevoegen - we gebruiken share voor gebruikersdata
+# Persistente opslag gebruiken
 map:
-  - share:rw
-
-# Zorg dat we root zijn om de map te kunnen aanmaken
-privileged: true
+  - data:rw
 
 # Overige configuratie
 ports:
