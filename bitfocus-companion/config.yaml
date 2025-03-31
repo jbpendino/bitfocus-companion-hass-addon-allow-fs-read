@@ -23,7 +23,6 @@ ports_description:
   16622/tcp: "Satellite API"
   16623/tcp: "WebSocket (Elgato Plugin)"
   28492/tcp: "Additional port"
-devices:
-  - /dev/bus/usb
+usb: true
 build_args:
   BUILD_ARCH: '|arch|'
