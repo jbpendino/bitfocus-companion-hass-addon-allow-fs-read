@@ -12,6 +12,7 @@ webui: "http://[HOST]:[PORT:8000]/"
 panel_icon: "mdi:remote"
 map: 
   - type: addon_config
+    path: /companion 
     read_only: false
 ports:
   8000/tcp: 8000
