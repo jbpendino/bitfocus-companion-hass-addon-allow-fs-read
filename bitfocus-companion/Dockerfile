@@ -7,23 +7,23 @@ RUN \
         nodejs \
         npm \
         bash \
-        curl
+        curl \
+        tzdata
 
-# Maak een companion gebruiker en benodigde directories
-RUN \
-    adduser -D companion && \
-    mkdir -p /app /companion && \
-    chown -R companion:companion /app /companion
-
-# Kopieer het startscript
+# Kopieer startscript
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-# Configureer volumes
-VOLUME /companion
+# Maak benodigde directories
+RUN \
+    mkdir -p /app /data && \
+    chmod 777 /app /data
 
-# Poorten
+# Configureer volumes
+VOLUME /data
+
+# Configureer poorten
 EXPOSE 8000 16622 16623 28492
 
-# Startup command
+# Configureer opstart
 CMD [ "/run.sh" ]
