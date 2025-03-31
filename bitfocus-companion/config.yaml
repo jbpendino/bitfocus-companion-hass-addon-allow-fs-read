@@ -1,6 +1,6 @@
 name: "Bitfocus Companion"
 description: "Bitfocus Companion voor het aansturen van een Stream Deck via Companion Satellite"
-version: "0.1.9"  # Versie verhoogd
+version: "0.2.0"
 slug: "bitfocus_companion"
 init: false
 arch:
@@ -13,7 +13,7 @@ panel_icon: "mdi:remote"
 
 # Persistente mappen toevoegen
 map:
-  - config:rw
+  - share:rw
 
 # Overige configuratie
 ports:
