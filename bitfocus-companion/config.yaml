@@ -19,7 +19,8 @@ environment:
 map:
   - type: addon_config
     read_only: false
-
+    
+privileged: true
 
 # Poorten configureren
 ports:
