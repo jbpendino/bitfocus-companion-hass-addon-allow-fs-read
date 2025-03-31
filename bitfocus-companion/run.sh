@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# Als /data (de persistente opslag) leeg is, kopieer de standaardconfiguratie
+# Controleer of de persistente opslag (/data) leeg is.
 if [ ! -d "/data" ] || [ -z "$(ls -A /data)" ]; then
   echo "Kopieer standaard configuratie naar /data"
   cp -r /companion/v3.5/* /data/
