@@ -4,13 +4,13 @@ FROM ${BUILD_FROM}
 # Stel de werkdirectory in op /app
 WORKDIR /app
 
-# (Optioneel) Installeer tzdata als je in een andere timezone wilt draaien
+# (Optioneel) Installeer tzdata als dat nodig is
 RUN apk add --no-cache tzdata
 
 # Kopieer run.sh naar de container en maak het uitvoerbaar
 COPY run.sh /
 RUN chmod +x /run.sh
 
-# Gebruik run.sh als ENTRYPOINT en geef de gewenste argumenten mee als CMD
+# Gebruik run.sh als ENTRYPOINT en geef het originele opstartcommando mee als CMD
 ENTRYPOINT ["/run.sh"]
-CMD ["--admin-address", "0.0.0.0", "--admin-port", "8000", "--config-dir", "/companion", "--extra-module-path", "/app/module-local-dev"]
+CMD ["sh", "-c", "./node-runtimes/main/bin/node ./main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir $COMPANION_CONFIG_BASEDIR --extra-module-path /app/module-local-dev"]
