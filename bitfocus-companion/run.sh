@@ -1,15 +1,11 @@
 #!/bin/sh
 set -e
 
-# Debug: toon inhoud van /usr/local/bin
-echo "Inhoud van /usr/local/bin:"
-ls -l /usr/local/bin || echo "Geen inhoud gevonden in /usr/local/bin"
-
 # Zorg dat de /companion map bestaat
 mkdir -p /companion
 
-# Persistente opslag:
-# Als de gemounte opslag (/data, via addon_config) leeg is, kopieer de standaardconfiguratie (indien aanwezig)
+# Persistente opslag-logica:
+# Als de gemounte opslag (/data) leeg is, kopieer de standaardconfiguratie (indien aanwezig)
 if [ ! -d "/data" ] || [ -z "$(ls -A /data)" ]; then
   echo "Kopieer standaardconfiguratie naar /data"
   if [ -d "/companion/v3.5" ]; then
@@ -25,13 +21,11 @@ ln -s /data /companion/v3.5
 
 echo "Start Companion..."
 
-# Zoek de companion binary via which
-COMP_BIN=$(which companion || true)
-if [ -z "$COMP_BIN" ]; then
-  echo "Companion binary niet gevonden in PATH."
-  exit 1
+# Probeer eerst de originele entrypoint-script via sh aan te roepen
+if [ -f /docker-entrypoint.sh ]; then
+  echo "Found /docker-entrypoint.sh, executing via sh..."
+  exec sh /docker-entrypoint.sh "$@"
+else
+  echo "/docker-entrypoint.sh not found. Falling back to CMD..."
+  exec "$@"
 fi
-echo "Companion binary gevonden: $COMP_BIN"
-
-# Voer de companion binary uit met de CMD-argumenten
-exec "$COMP_BIN" "$@"
