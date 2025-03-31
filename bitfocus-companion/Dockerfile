@@ -6,8 +6,8 @@ COPY run.sh /run.sh
 # Debug: controleer of run.sh aanwezig is
 RUN ls -l /run.sh
 
-# Installeer dos2unix en converteer de line endings van run.sh
-RUN apt-get update && apt-get install -y dos2unix && dos2unix /run.sh
+# Converteer CRLF naar LF met awk (verwijdert carriage returns aan het eind van regels)
+RUN awk '{ sub(/\r$/, ""); print }' /run.sh > /run.sh.tmp && mv /run.sh.tmp /run.sh
 
 # Maak het script uitvoerbaar
 RUN chmod +x /run.sh
