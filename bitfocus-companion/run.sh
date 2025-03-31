@@ -5,7 +5,7 @@ set -e
 mkdir -p /companion
 
 # Persistente opslag:
-# Als de gemounte opslag (/data, via addon_config) leeg is, kopieer de standaardconfiguratie (indien aanwezig)
+# Als de gemounte opslag (/data) leeg is, kopieer dan de standaardconfiguratie (indien aanwezig)
 if [ ! -d "/data" ] || [ -z "$(ls -A /data)" ]; then
   echo "Kopieer standaardconfiguratie naar /data"
   if [ -d "/companion/v3.5" ]; then
@@ -19,12 +19,11 @@ fi
 rm -rf /companion/v3.5
 ln -s /data /companion/v3.5
 
-echo "Start Companion..."
-
-# Als /docker-entrypoint.sh bestaat, voer deze dan via bash uit zodat alle bash-specifieke functies werken
-if [ -f /docker-entrypoint.sh ]; then
-  echo "Found /docker-entrypoint.sh, executing via bash..."
-  exec bash /docker-entrypoint.sh "$@"
-else
-  exec "$@"
+# Fix: zorg dat /app/node-runtimes/main bestaat; als deze niet bestaat, maak een symlink naar node18
+if [ ! -d "/app/node-runtimes/main" ]; then
+  echo "Symlink /app/node-runtimes/main bestaat niet, maak deze aan als een link naar /app/node-runtimes/node18"
+  ln -s /app/node-runtimes/node18 /app/node-runtimes/main
 fi
+
+echo "Start Companion..."
+exec "$@"
