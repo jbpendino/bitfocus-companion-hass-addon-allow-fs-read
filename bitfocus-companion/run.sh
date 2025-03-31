@@ -4,7 +4,7 @@ set -e
 # Zorg dat de /companion map bestaat
 mkdir -p /companion
 
-# Als de persistente opslag (/data) leeg is, kopieer dan de standaardconfiguratie (indien aanwezig)
+# Als de persistente opslag (/data) leeg is, kopieer de standaardconfiguratie (indien aanwezig)
 if [ ! -d "/data" ] || [ -z "$(ls -A /data)" ]; then
   echo "Kopieer standaardconfiguratie naar /data"
   if [ -d "/companion/v3.5" ]; then
