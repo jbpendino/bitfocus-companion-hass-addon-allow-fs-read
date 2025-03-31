@@ -4,13 +4,13 @@ set -e
 # Zorg dat de /companion map bestaat
 mkdir -p /companion
 
-# Als de persistente opslag (/data) leeg is, kopieer de standaardconfiguratie (indien aanwezig)
+# Als de persistente opslag (/data) leeg is, kopieer dan de standaardconfiguratie (indien aanwezig)
 if [ ! -d "/data" ] || [ -z "$(ls -A /data)" ]; then
-  echo "Kopieer standaard configuratie naar /data"
+  echo "Kopieer standaardconfiguratie naar /data"
   if [ -d "/companion/v3.5" ]; then
     cp -r /companion/v3.5/* /data/
   else
-    echo "Geen standaard configuratie gevonden in /companion/v3.5."
+    echo "Geen standaardconfiguratie gevonden in /companion/v3.5."
   fi
 fi
 
@@ -19,4 +19,7 @@ rm -rf /companion/v3.5
 ln -s /data /companion/v3.5
 
 echo "Start Companion..."
+# Ga naar de werkdirectory zoals verwacht door de originele image (/app)
+cd /app
+# Voer het originele CMD-commando uit (wordt meegegeven als argumenten)
 exec "$@"
