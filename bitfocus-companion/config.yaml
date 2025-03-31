@@ -25,3 +25,5 @@ ports_description:
   28492/tcp: "Additional port"
 devices:
   - /dev/bus/usb
+build_args:
+  BUILD_ARCH: '|arch|'
