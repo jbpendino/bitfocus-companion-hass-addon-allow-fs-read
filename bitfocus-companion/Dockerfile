@@ -1,14 +1,15 @@
 ARG BUILD_FROM=ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:ff126d7fa635ae9f64568d522432f7665dc8c846f067302b39ae55eb513472a5
 FROM ${BUILD_FROM}
 
-# Zorg dat we in de juiste werkdirectory zitten (/app) zoals de originele image verwacht
+# Zorg dat we in de juiste werkdirectory zitten (/app)
 WORKDIR /app
 
 
-# Kopieer run.sh naar de container en maak het uitvoerbaar
+# Kopieer ons run.sh-script naar de container en maak het uitvoerbaar
 COPY run.sh /
 RUN chmod +x /run.sh
 
-# Stel run.sh in als ENTRYPOINT en geef het originele commando mee als CMD
+# Zet run.sh als ENTRYPOINT en geef het originele opstartcommando mee als CMD.
+# Gebruik een absoluut pad voor de Node binary.
 ENTRYPOINT ["/run.sh"]
-CMD ["sh", "-c", "./node-runtimes/main/bin/node ./main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir $COMPANION_CONFIG_BASEDIR --extra-module-path /app/module-local-dev"]
+CMD ["sh", "-c", "/app/node-runtimes/main/bin/node /app/main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir $COMPANION_CONFIG_BASEDIR --extra-module-path /app/module-local-dev"]
