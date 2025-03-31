@@ -11,13 +11,16 @@ boot: auto
 webui: "http://[HOST]:[PORT:8000]/"
 panel_icon: "mdi:remote"
 
-# Bepaal config locatie
+# Configuratie
 environment:
   COMPANION_CONFIG_BASEDIR: "/data/companion"
 
-# Gebruik map om configuratie persistent te maken
+# Persistentie
 map:
   - data:rw
+
+# Verhoogde rechten om mappen aan te maken
+privileged: true
 
 # Poorten configureren
 ports:
