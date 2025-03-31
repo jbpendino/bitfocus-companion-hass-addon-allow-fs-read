@@ -14,7 +14,7 @@ panel_icon: "mdi:remote"
 # Bepaal config locatie
 environment:
   COMPANION_CONFIG_BASEDIR: "/data/companion"
-
+full_access: true
 # Gebruik map om configuratie persistent te maken
 map:
   - type: addon_config
