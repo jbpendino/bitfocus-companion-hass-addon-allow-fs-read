@@ -1,17 +1,25 @@
-#!/usr/bin/env bashio
+#!/usr/bin/env bash
+set -e
 
-# Get config
-DATA_PATH=$(bashio::config 'data_path')
+# Zorg ervoor dat de companion map bestaat en de juiste rechten heeft
+mkdir -p /share/companion
+chown -R companion:companion /share/companion
 
-# Ensure data directory exists
-mkdir -p /share/$DATA_PATH
+# Symboolkoppeling maken naar /companion als dit nog niet bestaat
+if [ ! -L "/companion" ]; then
+  # Als /companion een directory is, verplaats dan de inhoud
+  if [ -d "/companion" ] && [ "$(ls -A /companion)" ]; then
+    cp -r /companion/* /share/companion/ || true
+    rm -rf /companion
+  else
+    rm -rf /companion
+  fi
+  
+  ln -s /share/companion /companion
+fi
 
-# Ensure the companion user can write to the data directory
-chown -R companion:companion /share/$DATA_PATH
- 
-# Link the share directory to /companion
-rm -rf /companion
-ln -sf /share/$DATA_PATH /companion
+# Zorg ervoor dat de companion gebruiker eigenaar is
+chown -R companion:companion /companion
 
-# Start Companion
-exec /docker-entrypoint.sh node /app/main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir /companion --extra-module-path /app/module-local-dev
+# Start de originele entrypoint met de gegeven parameters
+exec /docker-entrypoint.sh "$@"
