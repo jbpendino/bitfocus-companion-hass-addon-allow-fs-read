@@ -22,3 +22,7 @@ ports_description:
   28492/tcp: "Additional port"
 devices:
   - /dev/bus/usb
+environment:
+  COMPANION_CONFIG_BASEDIR: "/data"
+map:
+  - "data:rw"
