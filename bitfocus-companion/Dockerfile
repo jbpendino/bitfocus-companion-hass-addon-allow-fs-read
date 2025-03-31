@@ -1,37 +1,33 @@
-FROM alpine:latest
+ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
+FROM ${BUILD_FROM}
 
-# Installeer benodigde pakketten
-RUN apk add --no-cache nodejs npm bash curl
+# Copy data for add-on
+COPY run.sh /
+RUN chmod a+x /run.sh
 
-# Maak de nodige mappen aan
-RUN mkdir -p /app /companion /share/companion
+# Installeer benodigdheden voor het runnen van companion
+RUN \
+    apk add --no-cache \
+        nodejs \
+        npm \
+        bash \
+        curl
 
-# Creëer een companion gebruiker
-RUN adduser -D companion
-RUN chown -R companion:companion /app /companion /share/companion
+# Pull companion container en extraheer bestanden naar /app
+RUN \
+    apk add --no-cache docker-cli && \
+    docker pull ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b && \
+    mkdir -p /app && \
+    docker save ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b | tar --extract --file - --wildcards '*/layer.tar' && \
+    for f in */layer.tar; do tar --extract --file "$f" --directory /app; done && \
+    rm -rf */layer.tar && \
+    apk del docker-cli
 
-# Maak een symlink van /share/companion naar /companion
-RUN rm -rf /companion && ln -s /share/companion /companion
+# Maak companion gebruiker en fix permissies
+RUN \
+    adduser -D companion && \
+    mkdir -p /companion && \
+    chown -R companion:companion /app /companion
 
-# Voeg een startup script toe
-RUN echo '#!/bin/bash' > /startup.sh && \
-    echo 'mkdir -p /share/companion' >> /startup.sh && \
-    echo 'chown -R companion:companion /share/companion' >> /startup.sh && \
-    echo 'if [ ! -L "/companion" ]; then' >> /startup.sh && \
-    echo '  rm -rf /companion' >> /startup.sh && \
-    echo '  ln -s /share/companion /companion' >> /startup.sh && \
-    echo 'fi' >> /startup.sh && \
-    echo 'chown -R companion:companion /companion' >> /startup.sh && \
-    echo 'cd /app && exec node ./main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir /companion' >> /startup.sh && \
-    chmod +x /startup.sh
-
-# Hier zou je de bestanden van het originele Companion image moeten kopiëren
-# Dit vereist een meer complexe multistage build proces
-
-WORKDIR /app
-USER companion
-
-# Ports exposed by the container
-EXPOSE 8000 16622 16623 28492
-
-ENTRYPOINT ["/startup.sh"]
+# Configureer command
+CMD [ "/run.sh" ]
