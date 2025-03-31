@@ -19,7 +19,4 @@ rm -rf /companion/v3.5
 ln -s /data /companion/v3.5
 
 echo "Start Companion..."
-# Ga naar de werkdirectory zoals verwacht door de originele image (/app)
-cd /app
-# Voer het originele CMD-commando uit (wordt meegegeven als argumenten)
 exec "$@"
