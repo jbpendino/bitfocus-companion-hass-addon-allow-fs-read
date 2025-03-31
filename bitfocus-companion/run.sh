@@ -4,8 +4,8 @@ set -e
 # Zorg dat de /companion map bestaat
 mkdir -p /companion
 
-# Persistente opslag-logica:
-# Als de gemounte opslag (/data) leeg is, kopieer de standaardconfiguratie (indien aanwezig)
+# Persistente opslag:
+# Als de gemounte opslag (/data, via addon_config) leeg is, kopieer de standaardconfiguratie (indien aanwezig)
 if [ ! -d "/data" ] || [ -z "$(ls -A /data)" ]; then
   echo "Kopieer standaardconfiguratie naar /data"
   if [ -d "/companion/v3.5" ]; then
@@ -21,11 +21,10 @@ ln -s /data /companion/v3.5
 
 echo "Start Companion..."
 
-# Probeer eerst de originele entrypoint-script via sh aan te roepen
+# Als /docker-entrypoint.sh bestaat, voer deze dan via bash uit zodat alle bash-specifieke functies werken
 if [ -f /docker-entrypoint.sh ]; then
-  echo "Found /docker-entrypoint.sh, executing via sh..."
-  exec sh /docker-entrypoint.sh "$@"
+  echo "Found /docker-entrypoint.sh, executing via bash..."
+  exec bash /docker-entrypoint.sh "$@"
 else
-  echo "/docker-entrypoint.sh not found. Falling back to CMD..."
   exec "$@"
 fi
