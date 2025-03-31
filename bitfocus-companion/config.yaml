@@ -1,6 +1,6 @@
 name: "Bitfocus Companion"
 description: "Bitfocus Companion voor het aansturen van een Stream Deck via Companion Satellite"
-version: "0.1.9"
+version: "0.1.8"
 slug: "bitfocus_companion"
 init: false
 arch:
@@ -10,16 +10,6 @@ startup: application
 boot: auto
 webui: "http://[HOST]:[PORT:8000]/"
 panel_icon: "mdi:remote"
-# Bepaal config locatie
-environment:
-  COMPANION_CONFIG_BASEDIR: "/data/companion"
-# Gebruik map om configuratie persistent te maken
-map:
-  - type: addon_config
-    read_only: false
-
-privileged: true
-# Poorten configureren
 ports:
   8000/tcp: 8000
   16622/tcp: 16622
