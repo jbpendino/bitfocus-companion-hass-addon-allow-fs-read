@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bashio
 # ==============================================================================
-# Uitvoeren als de Companion service is gestopt
+# Take action on shutdown
 # ==============================================================================
 
-bashio::log.info "Bitfocus Companion is gestopt"
+bashio::log.info "Bitfocus Companion service is gestopt."
