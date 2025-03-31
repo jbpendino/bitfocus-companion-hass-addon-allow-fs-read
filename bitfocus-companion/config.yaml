@@ -19,6 +19,8 @@ environment:
 map:
   - type: addon_config
     read_only: false
+  - type: Data
+    read_ony: false
 
 # Poorten configureren
 ports:
