@@ -1,29 +1,10 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
-FROM ${BUILD_FROM}
+FROM ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:ff126d7fa635ae9f64568d522432f7665dc8c846f067302b39ae55eb513472a5
 
-# Installeer benodigde pakketten
-RUN \
-    apk add --no-cache \
-        nodejs \
-        npm \
-        bash \
-        curl \
-        tzdata
+USER root
 
-# Kopieer startscript
-COPY run.sh /
-RUN chmod a+x /run.sh
+# Kopieer het startup script
+COPY run.sh /run_companion.sh
+RUN chmod +x /run_companion.sh
 
-# Maak benodigde directories
-RUN \
-    mkdir -p /app /data && \
-    chmod 777 /app /data
-
-# Configureer volumes
-VOLUME /data
-
-# Configureer poorten
-EXPOSE 8000 16622 16623 28492
-
-# Configureer opstart
-CMD [ "/run.sh" ]
+# Verander het entrypoint
+ENTRYPOINT ["/run_companion.sh"]
