@@ -19,4 +19,4 @@ rm -rf /companion/v3.5
 ln -s /data /companion/v3.5
 
 echo "Start Companion..."
-exec /docker-entrypoint.sh "$@"
+exec "$@"
