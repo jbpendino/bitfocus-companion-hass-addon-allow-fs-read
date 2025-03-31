@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 set -e
 
-# Als /data/v3.5 leeg is, kopieer dan de standaardconfiguratie van /companion/v3.5 naar /data/v3.5
+# Zorg dat /data/v3.5 bestaat (Home Assistant mount /data als persistente opslag)
 if [ ! -d "/data/v3.5" ] || [ -z "$(ls -A /data/v3.5)" ]; then
   echo "Kopieer standaardconfiguratie naar persistente opslag /data/v3.5"
-  cp -r /companion/v3.5 /data/
+  # Controleer of de originele configuratiemap bestaat
+  if [ -d "/companion/v3.5" ]; then
+    cp -r /companion/v3.5 /data/
+  else
+    echo "Geen standaardconfiguratie gevonden in /companion/v3.5."
+  fi
 fi
 
-# Stel de environment variable in zodat Companion zijn configuratie uit de persistente opslag gebruikt
+# Zorg ervoor dat /data/v3.5 de juiste eigenaar heeft (bijvoorbeeld de 'companion' gebruiker)
+chown -R companion:companion /data/v3.5
+
+# Stel de environment variable in zodat Companion zijn configuratie uit persistente opslag gebruikt
 export COMPANION_CONFIG_BASEDIR=/data/v3.5
 echo "Gebruik configuratie uit: $COMPANION_CONFIG_BASEDIR"
 
