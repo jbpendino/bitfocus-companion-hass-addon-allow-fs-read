@@ -2,7 +2,7 @@ FROM ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:ff12
 
 
 # Kopieer jouw entrypoint-script naar de container en maak het uitvoerbaar.
-COPY entrypoint.sh /entrypoint.sh
+COPY run.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Gebruik jouw entrypoint-script als ENTRYPOINT.
