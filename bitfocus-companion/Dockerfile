@@ -1,8 +1,11 @@
-FROM ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:ff126d7fa635ae9f64568d522432f7665dc8c846f067302b39ae55eb513472a5
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
-# Kopieer het entrypoint script vanuit de submap (relatief aan de repository-root) naar de container
-COPY bitfocus-companion/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Installeer eventueel benodigde pakketten, zoals tzdata als je in een andere timezone wilt draaien
+RUN apk add --no-cache tzdata
 
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["companion"]
+# Kopieer run.sh naar de container en maak het uitvoerbaar
+COPY run.sh /
+RUN chmod +x /run.sh
+
+CMD [ "/run.sh" ]
