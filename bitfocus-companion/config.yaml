@@ -17,7 +17,8 @@ environment:
 
 # Gebruik map om configuratie persistent te maken
 map:
-  - data:rw
+  - type: addon_config
+    read_only: false
     
 privileged: true
 
