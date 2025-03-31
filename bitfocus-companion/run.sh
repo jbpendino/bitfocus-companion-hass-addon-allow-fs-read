@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
-# Als /data leeg is, kopieer dan de standaard configuratie naar /data
+# Als /data (de persistente opslag) leeg is, kopieer de standaardconfiguratie
 if [ ! -d "/data" ] || [ -z "$(ls -A /data)" ]; then
-    echo "Kopieer standaard configuratie naar /data"
-    cp -r /companion/v3.5/* /data/
+  echo "Kopieer standaard configuratie naar /data"
+  cp -r /companion/v3.5/* /data/
 fi
 
 # Verwijder de originele configuratiemap en maak een symlink naar /data
