@@ -1,10 +1,10 @@
 #!/bin/sh
 set -e
 
-# Zorg ervoor dat de directory /companion bestaat
+# Zorg dat de /companion map bestaat
 mkdir -p /companion
 
-# Als de persistente opslag (/data) leeg is, kopieer de standaardconfiguratie
+# Als de persistente opslag (/data) leeg is, kopieer de standaardconfiguratie (indien aanwezig)
 if [ ! -d "/data" ] || [ -z "$(ls -A /data)" ]; then
   echo "Kopieer standaard configuratie naar /data"
   if [ -d "/companion/v3.5" ]; then
@@ -19,4 +19,4 @@ rm -rf /companion/v3.5
 ln -s /data /companion/v3.5
 
 echo "Start Companion..."
-exec companion "$@"
+exec /docker-entrypoint.sh "$@"
