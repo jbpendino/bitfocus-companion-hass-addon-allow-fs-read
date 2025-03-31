@@ -1,38 +1,27 @@
-#!/usr/bin/env bashio
+#!/bin/bash
+set -e
 
-CONFIG_DIR="/data/companion"
-APP_DIR="/app"
+# Maak de data directory aan in Home Assistant data map
+DATA_DIR="/data/companion"
+mkdir -p ${DATA_DIR}
+chown -R companion:companion ${DATA_DIR}
 
-# Maak de config directory aan
-mkdir -p ${CONFIG_DIR}
-chmod 777 ${CONFIG_DIR}
-
-# Installeer Companion als het nog niet is geïnstalleerd
-if [ ! -d "${APP_DIR}/node_modules" ]; then
-    cd ${APP_DIR}
-    echo "Installeren van Bitfocus Companion. Dit kan enkele minuten duren..."
-    
-    # Installeer Companion via npm
-    npm install @bitfocus/companion@^3.5.3
-    
-    # Maak een eenvoudig startscript
-    cat > ${APP_DIR}/start-companion.js << EOF
-const { startCompanion } = require('@bitfocus/companion');
-
-startCompanion({
-  configDir: '${CONFIG_DIR}',
-  adminPort: 8000,
-  adminAddress: '0.0.0.0',
-  logRequests: true
-}).catch((e) => {
-  console.error('Failed to start companion', e);
-  process.exit(1);
-});
-EOF
-    
-    chmod +x ${APP_DIR}/start-companion.js
+# Maak een symlink van /companion naar de data directory als dat nodig is
+if [ ! -L "/companion" ]; then
+  # Als /companion al bestaat, verplaats de inhoud naar de data directory
+  if [ -d "/companion" ] && [ "$(ls -A /companion)" ]; then
+    cp -a /companion/. ${DATA_DIR}/
+    rm -rf /companion
+  else
+    rm -rf /companion
+  fi
+  
+  # Maak de symlink
+  ln -sf ${DATA_DIR} /companion
 fi
 
-# Start Companion
-cd ${APP_DIR}
-exec node ${APP_DIR}/start-companion.js
+# Zorg ervoor dat de companion gebruiker eigenaar is
+chown -R companion:companion /companion
+
+# Start Companion via het standaard entrypoint met de juiste parameters
+exec /docker-entrypoint.sh ./node-runtimes/main/bin/node ./main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir $COMPANION_CONFIG_BASEDIR --extra-module-path /app/module-local-dev
