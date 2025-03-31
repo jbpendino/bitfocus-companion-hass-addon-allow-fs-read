@@ -3,7 +3,11 @@ FROM ghcr.io/bitfocus/companion/companion:3.5.3-7770-stable-df70e20b@sha256:ff12
 
 # Kopieer het wrapper script naar de container
 COPY run.sh /run.sh
+
+# Debug: controleer of run.sh aanwezig is
+RUN ls -l /run.sh
+
+# Maak het script uitvoerbaar
 RUN chmod +x /run.sh
 
-# Gebruik het wrapper script als CMD
 CMD [ "/run.sh" ]
