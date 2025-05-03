@@ -1,10 +1,28 @@
-Add this repo to home assistant and install the companion addon.
+**Host Bitfocus Companion on your Pi/Odroid as a Home Assistant Add-on**
 
-Go to Addons
-Press the button to add an addon
-Click on the dots in the right corner > repositories
-Add this link: https://github.com/avdmr/bitfocus-companion-hass-addon
-Save
-Install the addon and enjoy hosting Companion.
+This setup allows you to run Companion directly within Home Assistant. It integrates smoothly with the Stream Deck Companion plugin and is likely compatible with Companion Satellite as well.
 
-Works perfectly with the Stream Deck Companion plugin. Just create a companio button, click on "Open Companion Plugin General Configuration" and add the IP of home assistant to connect. 
+**Installation Instructions:**
+
+    Open Home Assistant.
+
+    Go to Add-ons.
+
+    Click the button to add a new repository.
+
+    Click the three dots in the upper right corner and select Repositories.
+
+    Add this link:
+    https://github.com/avdmr/bitfocus-companion-hass-addon
+
+    Click Save.
+
+    Install the Companion add-on and start hosting Bitfocus Companion!
+
+**To get started:**
+
+    Create a Companion button on a Stream Deck page.
+
+    Click "Open Companion Plugin General Configuration".
+
+    Enter the IP address of your Home Assistant instance to connect.
