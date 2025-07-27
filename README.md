@@ -26,10 +26,11 @@ This setup allows you to run Companion directly within Home Assistant. It integr
     Click "Open Companion Plugin General Configuration".
 
     Enter the IP address of your Home Assistant instance to connect.
-
-** Troubleshooting **
-Apparently, the add-on may cause problems with other USB devices plugged into the device running HassOS.
-To work around this issue:
-Stop the other add-on(s) that use a USB device
-Restart the Companion add-on
-Then restart the other add-on(s)
+    
+    
+**Troubleshooting**
+    Apparently, the add-on may cause problems with other USB devices plugged into the device running HassOS.
+    To work around this issue:
+    Stop the other add-on(s) that use a USB device
+    Restart the Companion add-on
+    Then restart the other add-on(s)
