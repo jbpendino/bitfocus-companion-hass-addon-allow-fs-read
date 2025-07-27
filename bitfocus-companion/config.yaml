@@ -1,6 +1,6 @@
 name: "Bitfocus Companion"
 description: "Bitfocus Companion voor het aansturen van een Stream Deck via Companion Satellite"
-version: "0.2.1"
+version: "0.2.2"
 slug: "bitfocus_companion"
 init: false
 arch:
