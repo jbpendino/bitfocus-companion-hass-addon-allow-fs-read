@@ -24,4 +24,9 @@ fi
 chown -R companion:companion /companion
 
 # Start Companion via het standaard entrypoint met de juiste parameters
-exec /docker-entrypoint.sh ./node-runtimes/main/bin/node ./main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir $COMPANION_CONFIG_BASEDIR --extra-module-path /app/module-local-dev
+#old :exec /docker-entrypoint.sh ./node-runtimes/main/bin/node ./main.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir $COMPANION_CONFIG_BASEDIR --extra-module-path /app/module-local-dev
+
+export COMPANION_CONFIG_BASEDIR="/companion"
+
+# Start new
+exec /docker-entrypoint.sh
