@@ -30,7 +30,7 @@ This setup allows you to run Companion directly within Home Assistant. It integr
     
 **Troubleshooting**
 
-Apparently, the add-on may cause problems with other USB devices plugged into the device running HassOS.
+Apparently, the add-on may cause problems with other add-ons that use USB devices plugged into the device running HassOS.
 To work around this issue:
 
     Stop the other add-on(s) that use a USB device
