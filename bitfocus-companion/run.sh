@@ -29,4 +29,4 @@ chown -R companion:companion /companion
 export COMPANION_CONFIG_BASEDIR="/companion"
 
 # Start new
-exec /docker-entrypoint.sh
+exec node --allow-fs-read=* /app/server.js --admin-address 0.0.0.0 --admin-port 8000 --config-dir "/companion" --extra-module-path /app/module-local-dev
