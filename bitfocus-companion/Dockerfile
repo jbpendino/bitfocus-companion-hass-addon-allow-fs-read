@@ -9,10 +9,9 @@ FROM ${BUILD_ARCH}_image
 
 USER root
 
-# Kopieer het startup script en aangepaste entrypoint
+# Kopieer het startup script
 COPY run.sh /run_companion.sh
-COPY docker-entrypoint-hass.sh /docker-entrypoint-hass.sh
-RUN chmod +x /run_companion.sh /docker-entrypoint-hass.sh
+RUN chmod +x /run_companion.sh
 
 # Verander het entrypoint
 ENTRYPOINT ["/run_companion.sh"]
