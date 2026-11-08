@@ -1,3 +1,6 @@
+## 0.2.7
+Drop the Node permission model (`--permission` / `--allow-*`); use the stock upstream Companion 5.1.2 `docker-entrypoint.sh` so connection and surface modules (e.g. xkeys, Behringer X32) initialize normally. Earlier add-on versions applied `--allow-fs-read` for Companion 4.x; that workaround does not apply on 5.x.
+
 ## 0.2.6
 Fix add-on startup on Node v26 bundled with Companion 5.1.2: pass `--permission` and `--allow-fs-read=*` (and required `--allow-*` grants) on the `node` command line via a custom entrypoint instead of `NODE_OPTIONS` (`--experimental-permission` is rejected in `NODE_OPTIONS`).
 

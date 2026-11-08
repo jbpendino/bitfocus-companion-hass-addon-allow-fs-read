@@ -28,5 +28,5 @@ chown -R companion:companion /companion
 
 export COMPANION_CONFIG_BASEDIR="/companion"
 
-# Start Companion (v5 entrypoint with Node permission flags on the node binary, not NODE_OPTIONS)
-exec /docker-entrypoint-hass.sh
+# Start Companion via upstream v5 entrypoint (no Node permission model on 5.x)
+exec /docker-entrypoint.sh
