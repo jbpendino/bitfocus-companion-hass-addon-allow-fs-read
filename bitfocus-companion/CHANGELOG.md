@@ -1,3 +1,6 @@
+## 0.2.8
+Enable `host_network` so Companion uses the Home Assistant host's LAN interface instead of the add-on bridge IP. This allows Dante and mDNS discovery to work on the local network.
+
 ## 0.2.7
 Drop the Node permission model (`--permission` / `--allow-*`); use the stock upstream Companion 5.1.2 `docker-entrypoint.sh` so connection and surface modules (e.g. xkeys, Behringer X32) initialize normally. Earlier add-on versions applied `--allow-fs-read` for Companion 4.x; that workaround does not apply on 5.x.
 

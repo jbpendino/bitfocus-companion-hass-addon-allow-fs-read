@@ -1,6 +1,6 @@
 name: "Bitfocus Companion"
 description: "Bitfocus Companion for Home Assistant"
-version: "0.2.7"
+version: "0.2.8"
 slug: "bitfocus_companion"
 init: false
 arch:
@@ -8,6 +8,7 @@ arch:
   - amd64
 startup: application
 boot: auto
+host_network: true
 webui: "http://[HOST]:[PORT:8000]/"
 panel_icon: "mdi:remote"
 map:
