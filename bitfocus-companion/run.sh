@@ -28,8 +28,5 @@ chown -R companion:companion /companion
 
 export COMPANION_CONFIG_BASEDIR="/companion"
 
-# Allow modules to read the filesystem (required for some local/custom modules in the add-on)
-export NODE_OPTIONS="${NODE_OPTIONS:---experimental-permission --allow-fs-read=*}"
-
-# Start Companion via the upstream v5 entrypoint (config-tool + main.js)
-exec /docker-entrypoint.sh
+# Start Companion (v5 entrypoint with Node permission flags on the node binary, not NODE_OPTIONS)
+exec /docker-entrypoint-hass.sh
